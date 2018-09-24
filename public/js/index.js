@@ -4,7 +4,17 @@ $.getJSON("/articles", function(data) {
     for (var i = 0; i < data.length; i++) {
       // Display the apropos information on the page
       console.log(data[i])
-      $("#articles").append("<p data-id='" + data[i]._id + "'>" + data[i].title + "<br />" + data[i].link + "</p>");
+      let card = $('<div class="card" style="width: 36rem;" />');
+        let cardBody = $('<div class="card-body" />');
+        let cardTitle = $('<h5 class="card-title">');
+        cardTitle.text(data[i].title);
+        let cardArticleLink = $('<a class="card-link">Article Link</a>');
+        cardArticleLink.attr('href', data[i].link);
+        let cardNoteLink = $('<a href="#" class="card-link float-right">Save Article</a>'); 
+        cardNoteLink.attr('data-id', data[i]._id)
+        cardBody.append([cardTitle, cardArticleLink, cardNoteLink]);
+        card.append(cardBody);
+        $('#articles').append(card);
     }
   });
   
@@ -24,6 +34,8 @@ $.getJSON("/articles", function(data) {
       // With that done, add the note information to the page
       .then(function(data) {
         console.log(data);
+        
+
         // The title of the article
         $("#notes").append("<h2>" + data.title + "</h2>");
         // An input to enter a new title
