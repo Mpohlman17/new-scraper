@@ -25,7 +25,6 @@ module.exports = function(app) {
         // First, we grab the body of the html with request
         axios.get("http://www.echojs.com/").then(response => {
           let $ = cheerio.load(response.data);
-          let return_vals = [];
           $("article h2").each(function(i, element) {
             let result = {};
             result.title = $(this)
@@ -34,13 +33,15 @@ module.exports = function(app) {
             result.link = $(this)
               .children("a")
               .attr("href");
-            return_vals.push(result)
             db.Article.create(result)
               .catch(function(err) {
                  return res.json(err);
               });
           });
-          res.json(return_vals);
+          db.Article.find({}).then(data => {
+            res.json(data);
+          });
+          
         });
       });
       
@@ -64,7 +65,8 @@ module.exports = function(app) {
       // Route for saving/updating an Article's associated Note
       app.post("/articles/:id", function(req, res) {
         // Create a new note and pass the req.body to the entry
-        db.Article.update(req.body)
+        console.log(req.body);
+        db.Article.update({_id: req.params.id}, req.body)
           .then(function(data) {
             console.log(data)
             res.status(200);

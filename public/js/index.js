@@ -10,7 +10,7 @@ $.getJSON("/scrape", data => {
     cardTitle.text(data[i].title);
     let cardArticleLink = $('<a class="card-link">Article Link</a>');
     cardArticleLink.attr('href', data[i].link);
-    let cardNoteLink = $('<button class="btn btn-success float-right save-btn">Save Article</a>'); 
+    let cardNoteLink = $('<button class="btn btn-success float-right save-btn">Save Article</button>'); 
     cardNoteLink.attr('data-id', data[i]._id)
     cardBody.append([cardTitle, cardArticleLink, cardNoteLink]);
     card.append(cardBody);
@@ -21,7 +21,8 @@ $.getJSON("/scrape", data => {
 
  
 $(document).on('click', ".save-btn", function() {
-  var thisId = $(this).attr("data-id");
+  let thisId = $(this).attr("data-id");
+  console.log(thisId);
   $.ajax({
     method: "POST",
     url: "/articles/" + thisId,
