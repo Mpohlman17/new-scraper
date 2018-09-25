@@ -3,6 +3,7 @@ var bodyParser = require("body-parser");
 var logger = require("morgan");
 var mongoose = require("mongoose");
 var exphbs = require("express-handlebars");
+MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/scraper";
 
 // Our scraping tools
 // Axios is a promised-based http library, similar to jQuery's Ajax method
@@ -28,14 +29,15 @@ app.engine(
   );
   app.set("view engine", "handlebars");
 
-require("./routes/htmlRoutes")(app);
+require("./routes/routes")(app);
 
 // Use morgan logger for logging requests
 app.use(logger("dev"));
 
 
 // Connect to the Mongo DB
-mongoose.connect("mongodb://localhost/week18Populater", { useNewUrlParser: true });
+mongoose.Promise = Promise;
+mongoose.connect(MONGODB_URI);
 
 
 
