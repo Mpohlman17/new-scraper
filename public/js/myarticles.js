@@ -12,23 +12,45 @@ $.getJSON("savedarticles", data => {
       cardTitle.text(data[i].title);
       let cardArticleLink = $('<a class="card-link">Article Link</a>');
       cardArticleLink.attr('href', data[i].link);
-      let cardNoteLink = $('<button class="btn btn-success float-right save-btn">New Note</button>'); 
+      let cardNoteLink = $('<button class="btn btn-success float-right note-btn">New Note</button>'); 
       cardNoteLink.attr('data-id', data[i]._id)
+      let notes = $('<ul class="list-group list-group-flush">');
+      for (note in data[i.note]) {
+        console.log(note);
+        let noteInstance = $('<li class="list-group-item"></li>');
+        noteInstance.text(note.body);
+        notes.append(noteInstance);
+      }
       cardBody.append([cardTitle, cardArticleLink, cardNoteLink]);
-      card.append(cardBody);
+      card.append([cardBody, notes]);
       $('#articles').append(card);
   }
 }); 
 
  
-$(document).on('click', ".save-btn", function() {
+$(document).on('click', ".note-btn", function() {
   var thisId = $(this).attr("data-id");
+  let miniForm = $('<form/>');
+  let textbox = $('<textarea class="form-control" rows="5"></textarea>');
+  let noteSubmit = $('<button class="btn btn-primary float-right note-submit" type="submit">Save</button>');
+  noteSubmit.attr('data-id', thisId);
+  miniForm.append([textbox, noteSubmit]);
+  $(this).parent().append(miniForm);
+});
+
+
+$(document).on('click', ".note-submit", function(e) {
+  e.preventDefault();
+  var thisId = $(this).attr("data-id");
+  let noteText = $(this).parent().find("textarea").val();
   $.ajax({
     method: "POST",
-    url: "/articles/" + thisId,
+    url: "/articles/" + thisId + "/comments",
     data: {
-      saved: true
+      body: noteText
     }
+  }).then(data => {
+    console.log(data);
   })
 })
 
@@ -68,32 +90,5 @@ $(document).on("click", "p", function() {
     });
 });
 
-// When you click the savenote button
-$(document).on("click", "#savenote", function() {
-  // Grab the id associated with the article from the submit button
-  var thisId = $(this).attr("data-id");
 
-  // Run a POST request to change the note, using what's entered in the inputs
-  $.ajax({
-    method: "POST",
-    url: "/articles/" + thisId,
-    data: {
-      // Value taken from title input
-      title: $("#titleinput").val(),
-      // Value taken from note textarea
-      body: $("#bodyinput").val()
-    }
-  })
-    // With that done
-    .then(function(data) {
-      // Log the response
-      console.log(data);
-      // Empty the notes section
-      $("#notes").empty();
-    });
-
-  // Also, remove the values entered in the input and textarea for note entry
-  $("#titleinput").val("");
-  $("#bodyinput").val("");
-});
   

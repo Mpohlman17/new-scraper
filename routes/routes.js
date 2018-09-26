@@ -76,5 +76,24 @@ module.exports = function(app) {
             res.json(err);
           });
       });
+
+      app.post("/articles/:id/comments", function(req, res) {
+        // Create a new note and pass the req.body to the entry
+        db.Note.create(req.body, (err, val) => {
+          console.log(val);
+          db.Article.update({_id: req.params.id}, {'note': val}).then((data) => {
+            res.send(data);
+          });
+        })
+        
+        // let articleId = req.params.id;
+        // let res = {
+          
+        // }
+        //   db.Article.create(result)
+        //     .catch(function(err) {
+        //        return res.json(err);
+        //     });
+      });
 }
 
